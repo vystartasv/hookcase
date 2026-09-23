@@ -1,0 +1,9 @@
+# hookcase
+
+Dependency-free Bun/TypeScript CLI for deterministic webhook fixture contracts.
+
+- Site: https://vystartasv.github.io/hookcase/
+- Source: https://github.com/vystartasv/hookcase
+- Scope: fixture creation, checking, diffing, canonical JSON body bytes, HMAC headers.
+- Non-goals: network, receiver, tunnel, delivery service, proxy, replay, provider-specific dialects.
+- Secret rule: one explicitly named environment variable; never persisted or intentionally printed.

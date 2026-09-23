@@ -1,5 +1,7 @@
 # hookcase
 
+Project site: https://vystartasv.github.io/hookcase/
+
 `hookcase` is a dependency-free Bun/TypeScript CLI for deterministic webhook fixture contracts. It turns a checked-in event document plus an environment secret into a reproducible HTTP request fixture, checks captured fixtures, and prints a curl/script-free request summary for integration tests.
 
 The wedge is exactness: webhook integrations commonly fail at the signature, header, or body-byte boundary. Hookcase is a fixture generator and validator. It is not a tunnel, webhook receiver, SaaS, delivery service, proxy, or network replay tool.
