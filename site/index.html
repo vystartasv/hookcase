@@ -3,132 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>hookcase — make webhook signatures boring</title>
-  <meta name="description" content="Deterministic webhook fixture creation, checking, and diffing with canonical body bytes, HMAC headers, and environment-only secrets.">
+  <title>hookcase — make the request exact</title>
+  <meta name="description" content="Create, check, and diff deterministic webhook fixtures with canonical body bytes and environment-only secrets.">
   <link rel="canonical" href="https://vystartasv.github.io/hookcase/">
   <link rel="stylesheet" href="static/site.css">
   <script defer src="static/site.js"></script>
 </head>
-<body class="landing">
+<body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header">
-    <div class="wrap nav">
-      <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">∿</span>hookcase</a>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="#capabilities">Capabilities</a>
-        <a href="#workflow">Workflow</a>
-        <a href="#boundaries">Boundaries</a>
-        <a class="nav-cta" href="https://github.com/vystartasv/hookcase">View on GitHub <span aria-hidden="true">↗</span></a>
-      </nav>
-    </div>
-  </header>
-
+  <header class="site-header"><div class="wrap nav"><a class="brand" href="./"><span class="brand-mark" aria-hidden="true">∿</span>hookcase</a><nav aria-label="Primary"><a href="#anatomy">Anatomy</a><a href="#workflow">Workbench</a><a href="#security">Security</a><a class="nav-cta" href="https://github.com/vystartasv/hookcase">GitHub ↗</a></nav></div></header>
   <main id="main">
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="wrap hero-grid">
-        <div>
-          <p class="eyebrow">Deterministic webhook fixtures / hookcase</p>
-          <h1 id="hero-title">Make webhook signatures <em>boring.</em></h1>
-          <p class="lede">Create, check, and diff a reproducible HTTP request fixture from one event document and one environment-only secret.</p>
-          <div class="actions">
-            <a class="button" href="https://github.com/vystartasv/hookcase">Read the source on GitHub <span aria-hidden="true">↗</span></a>
-            <a class="button secondary" href="#quickstart">Run the quickstart</a>
-          </div>
-          <p class="hero-note"><span class="signal" aria-hidden="true"></span><span><strong>Exactness at the byte boundary.</strong> Canonical JSON, stable headers, timestamps, and HMAC validation stay reviewable.</span></p>
-        </div>
-        <div class="terminal" aria-label="hookcase demo command">
-          <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">fixture-demo / local shell</span><button class="copy-button" type="button" data-copy-target="demo-commands"><span class="copy-label">Copy</span></button><span class="copy-status" role="status" aria-live="polite"></span></div>
-          <pre id="demo-commands"><code>HOOKCASE_DEMO_SECRET=... bun run src/cli.ts demo
-{
-  "eventId": "evt_demo_001",
-  "request": {
-    "method": "POST",
-    "path": "/webhooks/orders",
-    "bodySha256": "&lt;64 lowercase hex&gt;",
-    "headers": {
-      "content-type": "application/json",
-      "x-fixture-source": "hookcase-demo",
-      "x-hookcase-signature": "sha256=&lt;64 lowercase hex&gt;",
-      "x-hookcase-timestamp": "1700000000"
-    }
-  }
-}</code></pre>
-          <p class="terminal-caption"><strong>Safe output shape:</strong> the secret is never shown; hash and signature values are redacted here too.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-rule" id="capabilities" aria-labelledby="capabilities-heading">
-      <div class="wrap">
-        <p class="eyebrow">The useful boundary</p>
-        <h2 id="capabilities-heading">Put the signature contract in a fixture.</h2>
-        <p class="section-intro">Hookcase narrows the problem to the parts integrations actually compare: exact body bytes, owned headers, and a reproducible artifact.</p>
-        <div class="card-grid">
-          <article class="card"><p class="card-kicker">01 / create</p><h3>Canonicalize once.</h3><p class="muted">Turn a checked-in event into stable JSON body bytes, sorted headers, deterministic IDs, and the documented HMAC fields.</p></article>
-          <article class="card"><p class="card-kicker">02 / check</p><h3>Catch drift locally.</h3><p class="muted">Validate fixture shape, body/header/timestamp agreement, bounds, and the signature using the named environment variable.</p></article>
-          <article class="card"><p class="card-kicker">03 / diff</p><h3>Review exact changes.</h3><p class="muted">Report deterministic field changes and SHA-256 hashes for the two exact body strings without requiring the secret.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="workflow" aria-labelledby="workflow-heading">
-      <div class="wrap">
-        <p class="eyebrow">How it works</p>
-        <h2 id="workflow-heading">Event document to checked artifact.</h2>
-        <div class="workflow">
-          <article class="workflow-step"><h3>Describe</h3><p>Keep the event, body, timestamp, and selected headers in JSON.</p></article>
-          <article class="workflow-step"><h3>Sign</h3><p>Read one explicitly named environment variable, never from the file.</p></article>
-          <article class="workflow-step"><h3>Emit</h3><p>Write stable fixture JSON with canonical body bytes and owned headers.</p></article>
-          <article class="workflow-step"><h3>Check</h3><p>Recompute and compare the contract, bounds, and HMAC locally.</p></article>
-          <article class="workflow-step"><h3>Diff</h3><p>Compare exact fields and body hashes without replaying a request.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section-rule" id="boundaries" aria-labelledby="boundaries-heading">
-      <div class="wrap">
-        <p class="eyebrow">Security and boundaries</p>
-        <h2 id="boundaries-heading">The fixture stays on your machine.</h2>
-        <div class="boundary-grid">
-          <article class="boundary-card"><h3>Included</h3><p>POST + JSON fixtures, canonical body bytes, sorted headers, bounded timestamps, HMAC-SHA256, environment-only secret input, and stable exit codes.</p></article>
-          <article class="boundary-card no"><h3>Not included</h3><p>No network, listening socket, receiver, tunnel, delivery service, proxy, replay, provider-specific dialects, or secret store.</p></article>
-        </div>
-        <div class="notice"><strong>Security posture:</strong> secrets are read from one named environment variable and are not persisted or intentionally printed. Header injection, forbidden transport/authentication headers, duplicate JSON keys, and oversized bodies are rejected.</div>
-      </div>
-    </section>
-
-    <section class="section" id="quickstart" aria-labelledby="quickstart-heading">
-      <div class="wrap two-column">
-        <div>
-          <p class="eyebrow">Quickstart</p>
-          <h2 id="quickstart-heading">Create a fixture in a few commands.</h2>
-          <p class="muted">Requires Bun. The event timestamp is explicit, so the example output is byte-stable.</p>
-          <pre><code>bun install --frozen-lockfile
+    <section class="hero" aria-labelledby="hero-title"><div class="wrap"><div class="hero-top"><p class="eyebrow">REQUEST WORKBENCH / DETERMINISTIC</p><p class="system-note">◒ follows your system theme</p></div><h1 id="hero-title">Make the webhook request <mark>boring.</mark></h1><p class="lede">Turn one checked-in event and one named environment secret into a reproducible fixture you can create, check, and diff locally.</p><div class="hero-actions"><a class="button" href="https://github.com/vystartasv/hookcase">Read the source on GitHub ↗</a><a class="button secondary" href="#quickstart">Open the quickstart</a></div><div class="receipt" aria-label="Redacted hookcase request receipt"><div class="receipt-head"><span>FIXTURE RECEIPT</span><strong>LOCAL ONLY</strong></div><div class="receipt-row"><span>POST</span><b>/webhooks/orders</b></div><div class="receipt-row"><span>BODY</span><b>{&quot;amount&quot;:1250,&quot;orderId&quot;:&quot;ord_42&quot;}</b></div><div class="receipt-row"><span>AUTH</span><b class="redacted">sha256=&lt;64 lowercase hex&gt;</b></div><div class="receipt-foot">secret source: environment · stored: false</div></div></div></section>
+    <section class="section anatomy" id="anatomy" aria-labelledby="anatomy-title"><div class="wrap"><div class="section-label"><span>01</span><p class="eyebrow">FIXTURE ANATOMY</p></div><h2 id="anatomy-title">Every byte has a place in the receipt.</h2><div class="anatomy-grid"><article><span class="part">01</span><h3>Event document</h3><p>Keep id, type, path, timestamp, body, and selected <code>x-*</code> headers in JSON.</p></article><article><span class="part">02</span><h3>Canonical body</h3><p>Sort object keys recursively, preserve array order, and sign the exact emitted string.</p></article><article><span class="part">03</span><h3>Owned headers</h3><p>Hookcase supplies content type, timestamp, and HMAC signature; secrets never enter the file.</p></article><article><span class="part">04</span><h3>Reviewable diff</h3><p>Compare stable fields and body hashes without requiring a secret or sending a request.</p></article></div></div></section>
+    <section class="section workbench" id="workflow" aria-labelledby="workflow-title"><div class="wrap workbench-grid"><div><div class="section-label"><span>02</span><p class="eyebrow">THE WORKBENCH</p></div><h2 id="workflow-title">Describe. Sign. Check. Diff.</h2><p class="muted">Hookcase owns the narrow boundary where webhook integrations disagree: body bytes, timestamp, headers, and HMAC.</p></div><ol class="bench-list"><li><b>CREATE</b><span>Read the event and one explicitly named env var.</span></li><li><b>CHECK</b><span>Validate fixture shape and recompute the signature.</span></li><li><b>DIFF</b><span>Show deterministic field changes and body hashes.</span></li></ol></div></section>
+    <section class="section" id="security" aria-labelledby="security-title"><div class="wrap security-grid"><div><div class="section-label"><span>03</span><p class="eyebrow">SAFETY RAILS</p></div><h2 id="security-title">A fixture, not a delivery system.</h2><p class="muted">Inputs are parsed and bounded before signing. The CLI makes no network calls, opens no receiver, and never replays a request.</p></div><div class="rail-card"><h3>Included</h3><ul><li>POST + JSON only</li><li>Canonical body and sorted headers</li><li>HMAC-SHA256 from an env-only secret</li><li>Stable exit codes and redacted output</li></ul><h3>Not included</h3><p>No tunnel, receiver, network, proxy, replay, provider dialect, or secret store.</p></div></div></section>
+    <section class="section quickstart" id="quickstart" aria-labelledby="quickstart-title"><div class="wrap quick-grid"><div><div class="section-label"><span>04</span><p class="eyebrow">QUICKSTART</p></div><h2 id="quickstart-title">Create a checked receipt.</h2><p class="muted">The placeholder below is intentionally not a credential, signature, or body hash.</p><pre><code>bun install --frozen-lockfile
 export HOOKCASE_SECRET='replace-me-locally'
-bun run src/cli.ts create examples/event.json --secret-env HOOKCASE_SECRET --out /tmp/hookcase-fixture.json
+bun run src/cli.ts create examples/event.json \
+  --secret-env HOOKCASE_SECRET --out /tmp/hookcase-fixture.json
 bun run src/cli.ts check /tmp/hookcase-fixture.json
-bun run src/cli.ts diff /tmp/hookcase-fixture.json /tmp/hookcase-fixture.json</code></pre>
-        </div>
-        <div class="evidence-card">
-          <p class="card-kicker">Verification / local evidence</p>
-          <h3>What the repository checks</h3>
-          <ul class="proof-list">
-            <li>Creation and checking with a known HMAC vector.</li>
-            <li>Malformed/duplicate JSON, bounds, and forbidden headers.</li>
-            <li>Deterministic diff, stable exit codes, and secret non-persistence.</li>
-            <li>Ten passing tests in the authoritative Bun runner.</li>
-          </ul>
-          <p class="proof">This is local evidence and documented scope—not proof of remote delivery, provider acceptance, adoption, or time saved.</p>
-        </div>
-      </div>
-    </section>
+bun run src/cli.ts diff /tmp/hookcase-fixture.json /tmp/hookcase-fixture.json</code></pre></div><aside class="proof"><p class="eyebrow">LOCAL EVIDENCE</p><h3>Documented results</h3><p><strong>create</strong> emits stable fixture JSON with <code>stored: false</code>.</p><p><strong>check</strong> returns <code>0</code> for a valid fixture.</p><p><strong>diff</strong> compares exact fields without a secret.</p><a href="https://github.com/vystartasv/hookcase/blob/main/README.md">Read the contract ↗</a></aside></div></section>
   </main>
-
-  <footer class="footer">
-    <div class="wrap footer-row">
-      <p>hookcase is an MIT-licensed deterministic fixture CLI.</p>
-      <nav class="footer-links" aria-label="Footer"><a href="https://github.com/vystartasv/hookcase">Source</a><a href="https://github.com/vystartasv/hookcase/blob/main/LICENSE">License</a><a href="https://github.com/vystartasv/hookcase/blob/main/README.md">README</a></nav>
-    </div>
-  </footer>
+  <footer class="footer"><div class="wrap footer-row"><p>hookcase · MIT · deterministic webhook fixtures</p><nav aria-label="Footer"><a href="https://github.com/vystartasv/hookcase">Source</a><a href="https://github.com/vystartasv/hookcase/blob/main/LICENSE">License</a><a href="https://github.com/vystartasv/hookcase/blob/main/README.md">README</a></nav></div></footer>
 </body>
 </html>
