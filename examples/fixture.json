@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "eventId": "evt_example_001",
+  "eventType": "order.created",
+  "method": "POST",
+  "path": "/webhooks/orders",
+  "body": "{\"amount\":1250,\"orderId\":\"ord_42\",\"status\":\"paid\"}",
+  "contentType": "application/json",
+  "headers": {
+    "content-type": "application/json",
+    "x-hookcase-signature": "sha256=a55619e0922cf92fb3bfbedb276226632a3f7fc861784b9af19d48dc197725d3",
+    "x-hookcase-timestamp": "1700000000",
+    "x-provider": "example"
+  },
+  "timestamp": 1700000000,
+  "signature": "sha256=a55619e0922cf92fb3bfbedb276226632a3f7fc861784b9af19d48dc197725d3",
+  "secret": {
+    "source": "environment",
+    "name": "HOOKCASE_EXAMPLE_SECRET",
+    "stored": false
+  }
+}

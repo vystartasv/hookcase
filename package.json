@@ -1,0 +1,19 @@
+{
+  "name": "hookcase",
+  "version": "0.1.0",
+  "description": "Deterministic webhook fixture contracts for Bun and TypeScript",
+  "type": "module",
+  "bin": {
+    "hookcase": "src/cli.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test tests/*.test.ts",
+    "build": "bun build src/cli.ts --compile --outfile dist/hookcase",
+    "demo": "HOOKCASE_DEMO_SECRET=demo-only bun run src/cli.ts demo"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "latest"
+  }
+}

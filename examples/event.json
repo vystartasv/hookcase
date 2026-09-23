@@ -1,0 +1,15 @@
+{
+  "id": "evt_example_001",
+  "type": "order.created",
+  "method": "POST",
+  "path": "/webhooks/orders",
+  "timestamp": 1700000000,
+  "body": {
+    "amount": 1250,
+    "orderId": "ord_42",
+    "status": "paid"
+  },
+  "headers": {
+    "x-provider": "example"
+  }
+}
